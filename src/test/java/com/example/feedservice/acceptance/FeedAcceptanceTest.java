@@ -9,6 +9,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.example.feedservice.io.SyndFeedMessageBodyWriter;
 import com.example.feedservice.io.FeedStore;
 import com.example.feedservice.io.MemoryFeedStore;
 import com.example.feedservice.resources.FeedHelper;
@@ -28,6 +29,8 @@ public class FeedAcceptanceTest extends ResourceTest {
 	public void before() throws Exception {
 		this.helper = new FeedHelper();
 		this.store = new MemoryFeedStore();
+		
+		// HACK: manually call setup method as it doesn't work automatically with testng
 		this.setUpJersey();
 	}
 	
@@ -39,12 +42,17 @@ public class FeedAcceptanceTest extends ResourceTest {
 	
 	@AfterTest
 	public void after() throws Exception {
+		// HACK: manually call teardown method as it doesn't work automatically with testng
 		this.tearDownJersey();
 	}
 
 	@Override
 	protected void setUpResources() throws Exception {
-		addResource(new FeedResource("rss_1.0", store));
+		addResource(new FeedResource("atom_1.0", store));
+		
+		// HACK: Add MessageBodyWriter as a resource because addProvider() 
+		// not yet available in the current release version
+		addResource(new SyndFeedMessageBodyWriter());
 	}
 
 	@Test

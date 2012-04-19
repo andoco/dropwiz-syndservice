@@ -2,9 +2,6 @@ package com.example.feedservice.resources;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.fail;
-
-import java.io.StringReader;
 
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
@@ -14,8 +11,6 @@ import com.example.feedservice.io.FeedStore;
 import com.example.feedservice.io.MemoryFeedStore;
 import com.google.common.base.Optional;
 import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedInput;
 
 public class FeedResourceTest {
 
@@ -92,22 +87,11 @@ public class FeedResourceTest {
 		this.helper.saveTestEntriesInFeed(store, feedNameParam);
         Optional<String> feedTypeParam = Optional.of(feedType);
         
-        String feedXml = resource.getFeed(
+        SyndFeed feed = resource.getFeed(
         	feedNameParam, 
         	feedTypeParam);
         
-        assertNotNull(feedXml);
-        
-        SyndFeedInput input = new SyndFeedInput();
-        
-        try {
-            SyndFeed feed = input.build(new StringReader(feedXml));
-            System.out.println(feed.getFeedType());
-            assertEquals(feed.getFeedType(), feedType);
-        }
-        catch (FeedException e) {
-            fail();
-        }
+        assertEquals(feed.getFeedType(), feedTypeParam.get());        
     }
 
 	@Test
@@ -120,22 +104,11 @@ public class FeedResourceTest {
 		this.helper.saveTestEntriesInFeed(store, feedNameParam);
         Optional<String> feedTypeParam = Optional.absent();
         
-        String feedXml = resource.getFeed(
+        SyndFeed feed = resource.getFeed(
         	feedNameParam, 
         	feedTypeParam);
-        
-        assertNotNull(feedXml);
-        
-        SyndFeedInput input = new SyndFeedInput();
-        
-        try {
-            SyndFeed feed = input.build(new StringReader(feedXml));
-            System.out.println(feed.getFeedType());
-            assertEquals(feed.getFeedType(), defaultFeedType);
-        }
-        catch (FeedException e) {
-            fail();
-        }
+      
+        assertEquals(feed.getFeedType(), defaultFeedType);
 	}
 	
 	@Test(expectedExceptions=IllegalArgumentException.class)

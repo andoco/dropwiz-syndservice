@@ -5,6 +5,7 @@ import com.yammer.dropwizard.config.Environment;
 
 import com.example.feedservice.resources.FeedResource;
 import com.example.feedservice.health.FeedTypeHealthCheck;
+import com.example.feedservice.io.SyndFeedMessageBodyWriter;
 import com.example.feedservice.io.MemoryFeedStore;
 
 public class FeedService extends Service<FeedConfiguration> {
@@ -24,6 +25,7 @@ public class FeedService extends Service<FeedConfiguration> {
         final String defaultFeedType = configuration.getDefaultFeedType();
         
         environment.addResource(new FeedResource(defaultFeedType, new MemoryFeedStore()));
+        environment.addProvider(new SyndFeedMessageBodyWriter());
         environment.addHealthCheck(new FeedTypeHealthCheck(defaultFeedType));
     }
 }

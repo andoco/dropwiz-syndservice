@@ -1,7 +1,5 @@
 package com.example.feedservice.resources;
 
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,7 +21,6 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
-import com.sun.syndication.io.SyndFeedOutput;
 import com.yammer.metrics.annotation.Timed;
 
 @Path("/feed")
@@ -82,7 +79,7 @@ public class FeedResource {
     @Path("/{name}")
     @GET
     @Timed
-    public String getFeed(
+    public SyndFeed getFeed(
     	@PathParam("name") String name,
     	@QueryParam("type") Optional<String> feedType) {
     	
@@ -91,22 +88,7 @@ public class FeedResource {
         	
     	SyndFeed feed = this.store.retrieveFeed(name);
     	feed.setFeedType(feedType.or(this.defaultFeedType));
-		
-		String feedXml = null;
-		
-		try {						
-			Writer writer = new StringWriter();
-			
-			SyndFeedOutput output = new SyndFeedOutput();
-			output.output(feed,writer);
-			
-			feedXml = writer.toString();
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			System.out.println("ERROR: "+ex.getMessage());
-		}
-    
-		return feedXml;
+    	
+    	return feed;		
     }
 }
