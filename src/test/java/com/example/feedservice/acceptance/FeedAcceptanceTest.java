@@ -49,10 +49,7 @@ public class FeedAcceptanceTest extends ResourceTest {
 	@Override
 	protected void setUpResources() throws Exception {
 		addResource(new FeedResource("atom_1.0", store));
-		
-		// HACK: Add MessageBodyWriter as a resource because addProvider() 
-		// not yet available in the current release version
-		addResource(new SyndFeedMessageBodyWriter());
+		addProvider(SyndFeedMessageBodyWriter.class);
 	}
 
 	@Test
